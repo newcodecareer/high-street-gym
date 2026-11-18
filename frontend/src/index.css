@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@plugin "daisyui";
+
+/* The gym's yellow brand palette, on top of the built-in light theme. */
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  --color-base-100: #ffffff;
+  --color-base-200: #f8fafc;
+  --color-base-300: #e2e8f0;
+  --color-base-content: #0f172a;
+  --color-primary: #eab308;
+  --color-primary-content: #1e293b;
+  --color-secondary: #0f172a;
+  --color-secondary-content: #f8fafc;
+  --color-accent: #ca8a04;
+  --color-accent-content: #fffbeb;
+  --color-neutral: #334155;
+  --color-neutral-content: #f8fafc;
+  --color-info: #0284c7;
+  --color-info-content: #f0f9ff;
+  --color-success: #16a34a;
+  --color-success-content: #f0fdf4;
+  --color-warning: #d97706;
+  --color-warning-content: #fffbeb;
+  --color-error: #dc2626;
+  --color-error-content: #fef2f2;
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+}
+
+@theme {
+  --font-sans: Inter, system-ui, sans-serif;
+}

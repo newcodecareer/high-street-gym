@@ -1,0 +1,34 @@
+{
+  "name": "@high-street-gym/backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "High Street Gym - Express/EJS management site and JSON API",
+  "main": "server.mjs",
+  "scripts": {
+    "dev": "nodemon -e \"js,mjs,cjs,json,yaml,env\" --exec \"node --env-file-if-exists=.env\" server.mjs",
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "tailwind": "npx @tailwindcss/cli -i ./src/tailwind.css -o ./public/css/tailwind.css --watch",
+    "tailwind:build": "npx @tailwindcss/cli -i ./src/tailwind.css -o ./public/css/tailwind.css",
+    "setup-db": "node --env-file-if-exists=.env scripts/setup-db.mjs",
+    "db:migrate": "node --env-file-if-exists=.env scripts/migrate-booking-unique.mjs",
+    "db:next-week": "node --env-file-if-exists=.env scripts/advance-week.mjs",
+    "db:migrate:api-key": "node --env-file-if-exists=.env scripts/migrate-api-key.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-openapi-validator": "^5.6.2",
+    "express-session": "^1.18.1",
+    "mysql2": "^3.11.4",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1",
+    "tailwindcss": "^4.3.3"
+  }
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head.ejs") %>
+    <title>My Bookings - High Street Gym</title>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+    <%- include("partials/header.ejs") %>
+
+    <main class="flex-1 w-full max-w-3xl mx-auto px-4 sm:px-6 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-slate-900">My bookings</h2>
+            <a href="/timetable" class="btn btn-primary">Book a class</a>
+        </div>
+
+        <% if (bookings.length == 0) { %>
+            <div class="card text-center text-slate-500">
+                You have no bookings yet. <a href="/timetable" class="text-brand-700 font-semibold hover:underline">Browse the timetable</a> to get started.
+            </div>
+        <% } %>
+
+        <div class="space-y-4">
+            <% for (const b of bookings) { %>
+                <div class="card flex flex-wrap items-center gap-4">
+                    <div class="flex-1 min-w-[200px]">
+                        <h3 class="text-lg font-bold text-slate-900"><%= b.activity.name %></h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <%= b.session.date %>
+                            &middot; <%= b.session.startTime.slice(0, 5) %> &ndash; <%= b.session.endTime.slice(0, 5) %>
+                        </p>
+                        <p class="text-sm text-slate-500">
+                            <%= b.location.name %> &middot; with <%= b.trainer.firstName %> <%= b.trainer.lastName %>
+                        </p>
+                    </div>
+                    <form action="/bookings/<%= b.booking.id %>/cancel" method="post">
+                        <button type="submit" class="btn btn-danger">Cancel booking</button>
+                    </form>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

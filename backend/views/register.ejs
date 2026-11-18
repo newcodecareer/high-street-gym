@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head.ejs") %>
+    <title>Register - High Street Gym</title>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+    <%- include("partials/header.ejs") %>
+    <main class="flex-1 w-full max-w-md mx-auto px-4 py-12">
+        <div class="card">
+            <h2 class="text-xl font-bold text-slate-900">Become a member</h2>
+            <p class="text-sm text-slate-500 mt-1 mb-6">Create a free member account to book classes.</p>
+
+            <form action="/authenticate/register" method="post" class="space-y-4">
+                <div>
+                    <label for="firstName" class="label">First name</label>
+                    <input type="text" name="firstName" id="firstName" class="input" maxlength="80" required />
+                </div>
+                <div>
+                    <label for="lastName" class="label">Last name</label>
+                    <input type="text" name="lastName" id="lastName" class="input" maxlength="80" required />
+                </div>
+                <div>
+                    <label for="email" class="label">Email</label>
+                    <input type="email" name="email" id="email" class="input" maxlength="254" required />
+                </div>
+                <div>
+                    <label for="password" class="label">Password</label>
+                    <input type="password" name="password" id="password" class="input" minlength="8" maxlength="72" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Create account</button>
+            </form>
+
+            <p class="text-sm text-slate-500 mt-6 text-center">
+                Already a member?
+                <a href="/authenticate/login" class="text-brand-700 font-semibold hover:underline">Log in</a>
+            </p>
+        </div>
+    </main>
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

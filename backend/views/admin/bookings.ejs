@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head.ejs") %>
+    <title>Manage Bookings - High Street Gym</title>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+    <%- include("../partials/header.ejs") %>
+
+    <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4">Manage bookings</h2>
+
+        <div class="flex flex-col lg:flex-row lg:gap-6">
+            <%- include("../partials/admin_nav.ejs") %>
+            <div class="flex-1 min-w-0">
+                <form action="/admin/bookings" method="get" class="flex gap-2 mb-6">
+                    <input type="text" name="search_term" value="<%= searchTerm %>" maxlength="100" placeholder="Search by member, activity or location..." class="input max-w-sm" />
+                    <button type="submit" class="btn btn-outline">Search</button>
+                    <% if (searchTerm) { %>
+                        <a href="/admin/bookings" class="btn btn-outline">Clear</a>
+                    <% } %>
+                </form>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    <div class="card">
+                        <%# Below md Activity, Trainer and When move under the member. %>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="text-left text-slate-500 border-b border-slate-200">
+                                        <th class="py-2 pr-3 font-medium">Member</th>
+                                        <th class="py-2 pr-3 font-medium max-md:hidden">Activity</th>
+                                        <th class="py-2 pr-3 font-medium max-md:hidden">Trainer</th>
+                                        <th class="py-2 pr-3 font-medium max-md:hidden">When</th>
+                                        <th class="py-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (const b of bookings) { %>
+                                        <tr class="border-b border-slate-100">
+                                            <td class="py-2 pr-3 font-medium">
+                                                <%= b.member.firstName %> <%= b.member.lastName %>
+                                                <div class="text-xs text-slate-500 font-normal md:hidden">
+                                                    <%= b.activity.name %> &middot;
+                                                    <%= b.trainer.firstName %> <%= b.trainer.lastName %> &middot;
+                                                    <%= b.session.date %> <%= b.session.startTime.slice(0, 5) %>
+                                                </div>
+                                            </td>
+                                            <td class="py-2 pr-3 text-slate-500 max-md:hidden"><%= b.activity.name %></td>
+                                            <td class="py-2 pr-3 text-slate-500 max-md:hidden"><%= b.trainer.firstName %> <%= b.trainer.lastName %></td>
+                                            <td class="py-2 pr-3 text-slate-500 max-md:hidden">
+                                                <%= b.session.date %> <%= b.session.startTime.slice(0, 5) %>
+                                            </td>
+                                            <td class="py-2 text-right">
+                                                <a href="/admin/bookings/<%= b.booking.id %>" class="btn-link">Edit</a>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <%- include("../partials/table_view_more.ejs") %>
+                    </div>
+
+                    <form
+                        action="/admin/bookings<% if (selectedBooking.id != null) { %>/<%= selectedBooking.id %><% } %>"
+                        method="post"
+                        class="card space-y-4">
+                        <div>
+                            <label for="memberId" class="label">Member</label>
+                            <select name="memberId" id="memberId" class="input">
+                                <% for (const member of members) { %>
+                                    <option value="<%= member.id %>" <%= String(selectedBooking.memberId) == String(member.id) ? "selected" : "" %>>
+                                        <%= member.firstName %> <%= member.lastName %> (<%= member.email %>)
+                                    </option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="sessionId" class="label">Session</label>
+                            <select name="sessionId" id="sessionId" class="input">
+                                <% for (const s of sessions) { %>
+                                    <option value="<%= s.session.id %>" <%= String(selectedBooking.sessionId) == String(s.session.id) ? "selected" : "" %>>
+                                        <%= s.activity.name %> &ndash; <%= s.location.name %> &ndash;
+                                        <%= s.session.date %> <%= s.session.startTime.slice(0, 5) %>
+                                        (with <%= s.trainer.firstName %> <%= s.trainer.lastName %>)
+                                    </option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-3 pt-2">
+                            <a href="/admin/bookings" class="btn btn-outline">Clear</a>
+                            <% if (selectedBooking.id == null) { %>
+                                <button type="submit" name="action" value="create" class="btn btn-primary">Create</button>
+                            <% } else { %>
+                                <button type="submit" name="action" value="update" class="btn btn-primary">Update</button>
+                                <button type="submit" name="action" value="delete" class="btn btn-danger">Delete</button>
+                            <% } %>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include("../partials/footer.ejs") %>
+</body>
+</html>

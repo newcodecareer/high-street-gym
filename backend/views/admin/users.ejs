@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head.ejs") %>
+    <title>Manage Users - High Street Gym</title>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+    <%- include("../partials/header.ejs") %>
+
+    <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4">Manage users</h2>
+
+        <div class="flex flex-col lg:flex-row lg:gap-6">
+            <%- include("../partials/admin_nav.ejs") %>
+            <div class="flex-1 min-w-0">
+                <form action="/admin/users" method="get" class="flex gap-2 mb-6">
+                    <input type="text" name="search_term" value="<%= searchTerm %>" maxlength="100" placeholder="Search by name, email or role..." class="input max-w-sm" />
+                    <button type="submit" class="btn btn-outline">Search</button>
+                    <% if (searchTerm) { %>
+                        <a href="/admin/users" class="btn btn-outline">Clear</a>
+                    <% } %>
+                </form>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    <div class="card">
+                        <%# Below md the email and role move under the name. %>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="text-left text-slate-500 border-b border-slate-200">
+                                        <th class="py-2 pr-3 font-medium">Name</th>
+                                        <th class="py-2 pr-3 font-medium max-md:hidden">Email</th>
+                                        <th class="py-2 pr-3 font-medium max-md:hidden">Role</th>
+                                        <th class="py-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (const user of users) { %>
+                                        <tr class="border-b border-slate-100">
+                                            <td class="py-2 pr-3">
+                                                <%= user.firstName %> <%= user.lastName %>
+                                                <div class="text-xs text-slate-500 font-normal md:hidden">
+                                                    <%= user.email %> &middot; <%= user.role %>
+                                                </div>
+                                            </td>
+                                            <td class="py-2 pr-3 text-slate-500 max-md:hidden"><%= user.email %></td>
+                                            <td class="py-2 pr-3 max-md:hidden"><%= user.role %></td>
+                                            <td class="py-2 text-right">
+                                                <a href="/admin/users/<%= user.id %>" class="btn-link">Edit</a>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <%- include("../partials/table_view_more.ejs") %>
+                    </div>
+
+                    <form
+                        action="/admin/users<% if (selectedUser.id != null) { %>/<%= selectedUser.id %><% } %>"
+                        method="post"
+                        class="card space-y-4">
+                        <div>
+                            <label for="firstName" class="label">First name</label>
+                            <input type="text" name="firstName" id="firstName" class="input" maxlength="80" value="<%= selectedUser.firstName %>" />
+                        </div>
+                        <div>
+                            <label for="lastName" class="label">Last name</label>
+                            <input type="text" name="lastName" id="lastName" class="input" maxlength="80" value="<%= selectedUser.lastName %>" />
+                        </div>
+                        <div>
+                            <label for="email" class="label">Email</label>
+                            <input type="email" name="email" id="email" class="input" maxlength="254" value="<%= selectedUser.email %>" />
+                        </div>
+                        <div>
+                            <label for="password" class="label">Password</label>
+                            <input
+                                type="password"
+                                name="password"
+                                id="password"
+                                class="input"
+                                minlength="8"
+                                maxlength="72"
+                                placeholder="<%= selectedUser.id != null ? 'Leave blank to keep current password' : 'Password' %>" />
+                        </div>
+                        <div>
+                            <label for="role" class="label">Role</label>
+                            <select name="role" id="role" class="input">
+                                <option value="member" <%= selectedUser.role == "member" ? "selected" : "" %>>Member</option>
+                                <option value="trainer" <%= selectedUser.role == "trainer" ? "selected" : "" %>>Trainer</option>
+                                <option value="admin" <%= selectedUser.role == "admin" ? "selected" : "" %>>Admin</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-3 pt-2">
+                            <a href="/admin/users" class="btn btn-outline">Clear</a>
+                            <% if (selectedUser.id == null) { %>
+                                <button type="submit" name="action" value="create" class="btn btn-primary">Create</button>
+                            <% } else { %>
+                                <button type="submit" name="action" value="update" class="btn btn-primary">Update</button>
+                                <button type="submit" name="action" value="delete" class="btn btn-danger">Delete</button>
+                            <% } %>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include("../partials/footer.ejs") %>
+</body>
+</html>

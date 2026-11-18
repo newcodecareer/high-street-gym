@@ -1,0 +1,506 @@
+components:
+  schemas:
+    Message:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: "Profile updated."
+
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    AuthenticationKey:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          type: string
+          format: uuid
+
+    UserCredentials:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "ava@hsgym.com"
+        password:
+          type: string
+          example: "password"
+
+    UserRegistration:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+      properties:
+        firstName:
+          type: string
+          maxLength: 80
+          example: "Ava"
+        lastName:
+          type: string
+          maxLength: 80
+          example: "Nguyen"
+        email:
+          type: string
+          format: email
+          example: "ava@hsgym.com"
+        password:
+          type: string
+          minLength: 8
+          maxLength: 72
+          example: "password"
+
+    UserProfile:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+      properties:
+        firstName:
+          type: string
+          maxLength: 80
+          example: "Ava"
+        lastName:
+          type: string
+          maxLength: 80
+          example: "Nguyen"
+        email:
+          type: string
+          format: email
+          example: "ava@hsgym.com"
+
+    UserProfilePatch:
+      type: object
+      description: Send only the fields that should change.
+      properties:
+        firstName:
+          type: string
+          maxLength: 80
+          example: "Ava"
+        # lastName:
+        #   type: string
+        #   maxLength: 80
+        #   example: "Nguyen"
+        # email:
+        #   type: string
+        #   format: email
+        #   example: "ava@hsgym.com"
+
+    User:
+      type: object
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - role
+      properties:
+        id:
+          type: integer
+          example: 10
+        firstName:
+          type: string
+          example: "Ava"
+        lastName:
+          type: string
+          example: "Nguyen"
+        email:
+          type: string
+          format: email
+          example: "ava@hsgym.com"
+        role:
+          type: string
+          enum:
+            - member
+            - trainer
+            - admin
+          example: "member"
+
+    Activity:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Yoga"
+        description:
+          type: string
+          nullable: true
+          example: "A calming flow to build strength and flexibility."
+        deleted:
+          type: integer
+          example: 0
+
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Ashgrove"
+        address:
+          type: string
+          nullable: true
+          example: "240 Waterworks Rd, Ashgrove QLD 4060"
+        deleted:
+          type: integer
+          example: 0
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        activityId:
+          type: integer
+          example: 1
+        locationId:
+          type: integer
+          example: 1
+        trainerId:
+          type: integer
+          example: 2
+        date:
+          type: string
+          format: date
+          example: "2026-11-02"
+        startTime:
+          type: string
+          example: "07:00:00"
+        endTime:
+          type: string
+          example: "08:00:00"
+        capacity:
+          type: integer
+          example: 20
+        deleted:
+          type: integer
+          example: 0
+
+    SessionDetail:
+      type: object
+      properties:
+        session:
+          $ref: '#/components/schemas/Session'
+        activity:
+          $ref: '#/components/schemas/Activity'
+        location:
+          $ref: '#/components/schemas/Location'
+        trainer:
+          $ref: '#/components/schemas/User'
+
+    SessionListItem:
+      allOf:
+        - $ref: '#/components/schemas/SessionDetail'
+        - type: object
+          properties:
+            bookedCount:
+              type: integer
+              example: 3
+            booked:
+              type: boolean
+              example: false
+
+    SessionList:
+      type: object
+      required:
+        - start
+        - end
+        - sessions
+      properties:
+        start:
+          type: string
+          format: date
+          example: "2026-11-02"
+        end:
+          type: string
+          format: date
+          example: "2026-11-08"
+        sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionListItem'
+
+    SessionInput:
+      type: object
+      required:
+        - activityId
+        - locationId
+        - date
+        - startTime
+        - endTime
+        - capacity
+      properties:
+        activityId:
+          type: integer
+          example: 1
+        locationId:
+          type: integer
+          example: 1
+        date:
+          type: string
+          format: date
+          example: "2026-11-05"
+        startTime:
+          type: string
+          example: "07:00"
+        endTime:
+          type: string
+          example: "08:00"
+        capacity:
+          type: integer
+          minimum: 1
+          maximum: 500
+          example: 20
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        sessionId:
+          type: integer
+          example: 1
+        memberId:
+          type: integer
+          example: 10
+        createdAt:
+          type: string
+          example: "2026-11-02 10:00:00"
+
+    BookingInput:
+      type: object
+      required:
+        - sessionId
+      properties:
+        sessionId:
+          type: integer
+          example: 1
+
+    BookingDetail:
+      type: object
+      properties:
+        booking:
+          $ref: '#/components/schemas/Booking'
+        session:
+          $ref: '#/components/schemas/Session'
+        activity:
+          $ref: '#/components/schemas/Activity'
+        location:
+          $ref: '#/components/schemas/Location'
+        trainer:
+          $ref: '#/components/schemas/User'
+        member:
+          $ref: '#/components/schemas/User'
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        memberId:
+          type: integer
+          example: 10
+        subject:
+          type: string
+          example: "First HIIT class done!"
+        body:
+          type: string
+          example: "Survived my first HIIT class."
+        createdAt:
+          type: string
+          example: "2026-11-02 10:00:00"
+
+    PostInput:
+      type: object
+      required:
+        - subject
+        - body
+      properties:
+        subject:
+          type: string
+          maxLength: 120
+          example: "First HIIT class done!"
+        body:
+          type: string
+          maxLength: 1000
+          example: "Survived my first HIIT class."
+
+    PostDetail:
+      type: object
+      properties:
+        post:
+          $ref: '#/components/schemas/Post'
+        author:
+          $ref: '#/components/schemas/User'
+
+  parameters:
+    StartDate:
+      name: start
+      in: query
+      description: First day of the range, as YYYY-MM-DD. Defaults to the current week.
+      required: false
+      schema:
+        type: string
+        format: date
+        example: "2026-11-02"
+    EndDate:
+      name: end
+      in: query
+      description: Last day of the range, as YYYY-MM-DD. Defaults to the current week.
+      required: false
+      schema:
+        type: string
+        format: date
+        example: "2026-11-08"
+    Search:
+      name: search
+      in: query
+      description: Case-insensitive text to match in the subject, body or author name.
+      required: false
+      schema:
+        type: string
+        example: "yoga"
+
+  responses:
+    BadRequest:
+      description: A value in the request is missing, invalid, or not allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: "The request is invalid."
+    Unauthorized:
+      description: The request has no valid authentication key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: "Not authenticated."
+    Forbidden:
+      description: The signed-in account may not perform this action
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: "Access forbidden."
+    NotFound:
+      description: The requested item does not exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: "The requested item was not found."
+    Conflict:
+      description: The action conflicts with an existing record
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: "The request conflicts with an existing record."
+    ServerError:
+      description: The server could not complete the request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: "The request could not be completed."
+    Created:
+      description: The item was created
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - message
+            properties:
+              id:
+                type: integer
+                example: 1
+              message:
+                type: string
+                example: "Created."
+    Message:
+      description: The request succeeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+    SessionsXML:
+      description: The signed-in trainer's sessions as XML
+      content:
+        application/xml:
+          schema:
+            type: object
+            xml:
+              name: schedule
+          example: |
+            <?xml version="1.0" encoding="UTF-8"?>
+            <schedule trainer="Liam Brooks" week-start="2026-11-02" week-end="2026-11-08" export-date="2026-11-07 09:30:00">
+                <session id="1">
+                    <activity>Yoga</activity>
+                    <location>Ashgrove</location>
+                    <date>2026-11-02</date>
+                    <start-time>06:00</start-time>
+                    <end-time>07:00</end-time>
+                    <capacity>20</capacity>
+                </session>
+            </schedule>
+    BookingsXML:
+      description: The signed-in member's bookings as XML
+      content:
+        application/xml:
+          schema:
+            type: object
+            xml:
+              name: bookings
+          example: |
+            <?xml version="1.0" encoding="UTF-8"?>
+            <bookings member="Ava Smith" export-date="2026-11-07 09:30:00">
+                <booking id="1">
+                    <booked-at>2026-11-02 10:00:00</booked-at>
+                    <activity>
+                        <name>Yoga</name>
+                        <description>A calming flow to build strength and flexibility.</description>
+                    </activity>
+                    <trainer>Liam Brooks</trainer>
+                    <location>
+                        <name>Ashgrove</name>
+                        <address>240 Waterworks Rd, Ashgrove QLD 4060</address>
+                    </location>
+                    <date>2026-11-02</date>
+                    <start-time>06:00</start-time>
+                    <end-time>07:00</end-time>
+                </booking>
+            </bookings>

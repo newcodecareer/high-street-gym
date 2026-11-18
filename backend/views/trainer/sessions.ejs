@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head.ejs") %>
+    <title>My Sessions - High Street Gym</title>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+    <%- include("../partials/header.ejs") %>
+
+    <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4">My sessions</h2>
+
+        <form action="/trainer" method="get" class="flex gap-2 mb-6">
+            <input type="text" name="search_term" value="<%= searchTerm %>" maxlength="100" placeholder="Search by activity, location or date..." class="input max-w-sm" />
+            <button type="submit" class="btn btn-outline">Search</button>
+            <% if (searchTerm) { %>
+                <a href="/trainer" class="btn btn-outline">Clear</a>
+            <% } %>
+        </form>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <div class="card">
+                <%# Below md Location and When move under the activity. %>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="text-left text-slate-500 border-b border-slate-200">
+                                <th class="py-2 pr-3 font-medium">Activity</th>
+                                <th class="py-2 pr-3 font-medium max-md:hidden">Location</th>
+                                <th class="py-2 pr-3 font-medium max-md:hidden">When</th>
+                                <th class="py-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (const s of sessions) { %>
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-2 pr-3 font-medium">
+                                        <%= s.activity.name %>
+                                        <div class="text-xs text-slate-500 font-normal md:hidden">
+                                            <%= s.location.name %> &middot;
+                                            <%= s.session.date %> <%= s.session.startTime.slice(0, 5) %>
+                                        </div>
+                                    </td>
+                                    <td class="py-2 pr-3 text-slate-500 max-md:hidden"><%= s.location.name %></td>
+                                    <td class="py-2 pr-3 text-slate-500 max-md:hidden">
+                                        <%= s.session.date %> <%= s.session.startTime.slice(0, 5) %>
+                                    </td>
+                                    <td class="py-2 text-right whitespace-nowrap">
+                                        <%# Started sessions cannot be edited, only deleted. %>
+                                        <% if (!hasStarted(s.session)) { %>
+                                            <a href="/trainer/<%= s.session.id %>" class="btn-link">Edit</a>
+                                        <% } %>
+                                        <form action="/trainer/<%= s.session.id %>" method="post" class="inline">
+                                            <input type="hidden" name="action" value="delete" />
+                                            <button type="submit" class="btn-link ml-3 text-red-700 hover:text-red-800">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <%- include("../partials/table_view_more.ejs") %>
+            </div>
+
+            <form
+                action="/trainer<% if (selectedSession.id != null) { %>/<%= selectedSession.id %><% } %>"
+                method="post"
+                class="card space-y-4">
+                <div>
+                    <label for="activityId" class="label">Activity</label>
+                    <select name="activityId" id="activityId" class="input">
+                        <% for (const activity of activities) { %>
+                            <option value="<%= activity.id %>" <%= String(selectedSession.activityId) == String(activity.id) ? "selected" : "" %>>
+                                <%= activity.name %>
+                            </option>
+                        <% } %>
+                    </select>
+                </div>
+                <div>
+                    <label for="locationId" class="label">Location</label>
+                    <select name="locationId" id="locationId" class="input">
+                        <% for (const location of locations) { %>
+                            <option value="<%= location.id %>" <%= String(selectedSession.locationId) == String(location.id) ? "selected" : "" %>>
+                                <%= location.name %>
+                            </option>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="date" class="label">Date</label>
+                        <input type="date" name="date" id="date" class="input" value="<%= selectedSession.date %>" min="<%= today %>" />
+                    </div>
+                    <div>
+                        <label for="capacity" class="label">Capacity</label>
+                        <input type="number" name="capacity" id="capacity" class="input" value="<%= selectedSession.capacity %>" min="1" max="500" required />
+                    </div>
+                    <div>
+                        <label for="startTime" class="label">Start time</label>
+                        <input type="time" name="startTime" id="startTime" class="input" value="<%= selectedSession.startTime.slice(0, 5) %>" />
+                    </div>
+                    <div>
+                        <label for="endTime" class="label">End time</label>
+                        <input type="time" name="endTime" id="endTime" class="input" value="<%= selectedSession.endTime.slice(0, 5) %>" />
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 pt-2">
+                    <a href="/trainer" class="btn btn-outline">Clear</a>
+                    <% if (selectedSession.id == null) { %>
+                        <button type="submit" name="action" value="create" class="btn btn-primary">Create</button>
+                    <% } else { %>
+                        <button type="submit" name="action" value="update" class="btn btn-primary">Update</button>
+                    <% } %>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <%- include("../partials/footer.ejs") %>
+</body>
+</html>

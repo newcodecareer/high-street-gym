@@ -1,0 +1,119 @@
+<%
+    // Nav item styling: the current page gets a filled yellow pill, the rest
+    // stay plain until hovered.
+    const path = currentPath || ""
+    const isCurrent = (prefix) => path === prefix || path.startsWith(prefix + "/")
+    const navItem = (prefix) => "px-3 py-1.5 rounded-lg " + (
+        isCurrent(prefix)
+            ? "bg-brand-500 text-slate-900 font-semibold"
+            : "text-slate-700 hover:text-brand-700 hover:bg-brand-100"
+    )
+
+    // /dashboard only redirects, so highlight the section it lands on.
+    const dashboardSection = {
+        member: "/bookings",
+        trainer: "/trainer",
+        admin: "/admin",
+    }[role]
+    const inDashboard = dashboardSection != null
+        && (path === dashboardSection || path.startsWith(dashboardSection + "/"))
+
+    // Phone menu rows. Dashboard uses inDashboard instead of a path match.
+    const menuItem = (active) => "block px-4 py-2.5 text-sm " + (
+        active
+            ? "bg-brand-500 text-slate-900 font-semibold"
+            : "font-medium text-slate-700 hover:bg-slate-50"
+    )
+%>
+<header class="bg-white border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <a href="/" class="flex items-center">
+            <h1 class="leading-none">
+                <%# Smaller logo on phones. %>
+                <img src="/img/logo-wordmark.svg" alt="High Street Gym" class="h-6 md:h-11 w-auto">
+            </h1>
+        </a>
+
+        <%# Below md the nav collapses into the menu button. %>
+        <nav class="ml-20 hidden md:flex flex-wrap items-center gap-1 text-sm font-medium">
+            <a href="/timetable" class="<%= navItem('/timetable') %>">Timetable</a>
+            <a href="/blog" class="<%= navItem('/blog') %>">Blog</a>
+        </nav>
+
+        <div class="ml-auto hidden md:flex items-center gap-4">
+            <% if (authenticatedUser) { %>
+                <a href="/dashboard" class="btn <%= inDashboard ? "btn-primary" : "btn-outline" %>">Dashboard</a>
+                <details class="group user-menu relative">
+                    <summary class="flex items-center gap-3 cursor-pointer rounded-lg px-2 py-1 hover:bg-slate-50">
+                        <div class="w-9 h-9 rounded-full bg-brand-100 border border-brand-200 text-brand-700 flex items-center justify-center font-bold">
+                            <%= authenticatedUser.firstName.charAt(0) %>
+                        </div>
+                        <div class="leading-tight">
+                            <div class="text-sm font-semibold text-slate-900"><%= authenticatedUser.firstName %></div>
+                            <div class="text-xs text-slate-500"><%= role.charAt(0).toUpperCase() + role.slice(1) %></div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-slate-400 transition group-open:rotate-180">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+                        </svg>
+                    </summary>
+                    <div class="absolute right-0 mt-1 w-40 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-20">
+                        <a href="/authenticate/logout" class="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-brand-100 hover:text-brand-800">Logout</a>
+                    </div>
+                </details>
+            <% } else { %>
+                <% if (path != "/authenticate/login") { %>
+                    <a href="/authenticate/login" class="text-sm font-medium text-slate-700 hover:text-brand-700">Login</a>
+                <% } %>
+                <a href="/authenticate/register" class="btn <%= isCurrent('/authenticate/register') ? "btn-primary" : "btn-outline" %>">Join now</a>
+            <% } %>
+        </div>
+
+        <%# Phone menu, using the same details element as the account menu. %>
+        <details class="nav-menu relative ml-auto md:hidden">
+            <summary class="btn btn-outline px-2.5! py-2.5!" aria-label="Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                    <path fill-rule="evenodd" d="M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75Zm0 10.5a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75ZM2 10a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Z" clip-rule="evenodd" />
+                </svg>
+            </summary>
+            <div class="absolute right-0 mt-1 w-56 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-20">
+                <% if (authenticatedUser) { %>
+                    <div class="flex items-center gap-3 px-4 py-2 mb-1 border-b border-slate-200">
+                        <div class="w-9 h-9 rounded-full bg-brand-100 border border-brand-200 text-brand-700 flex items-center justify-center font-bold">
+                            <%= authenticatedUser.firstName.charAt(0) %>
+                        </div>
+                        <div class="leading-tight">
+                            <div class="text-sm font-semibold text-slate-900"><%= authenticatedUser.firstName %></div>
+                            <div class="text-xs text-slate-500"><%= role.charAt(0).toUpperCase() + role.slice(1) %></div>
+                        </div>
+                    </div>
+                <% } %>
+
+                <a href="/timetable" class="<%= menuItem(isCurrent('/timetable')) %>">Timetable</a>
+                <a href="/blog" class="<%= menuItem(isCurrent('/blog')) %>">Blog</a>
+
+                <div class="border-t border-slate-200 my-1"></div>
+
+                <% if (authenticatedUser) { %>
+                    <a href="/dashboard" class="<%= menuItem(inDashboard) %>">Dashboard</a>
+                    <a href="/authenticate/logout" class="<%= menuItem(false) %>">Logout</a>
+                <% } else { %>
+                    <% if (path != "/authenticate/login") { %>
+                        <a href="/authenticate/login" class="<%= menuItem(false) %>">Login</a>
+                    <% } %>
+                    <%# Match the Join now button when the register page is open. %>
+                    <a href="/authenticate/register" class="block px-4 py-2.5 text-sm font-bold <%= isCurrent('/authenticate/register') ? "bg-brand-500 text-slate-900" : "text-slate-700 hover:bg-slate-50" %>">Join now</a>
+                <% } %>
+            </div>
+        </details>
+    </div>
+</header>
+<script>
+    // Close the header menus when clicking outside them.
+    document.addEventListener("click", (event) => {
+        document.querySelectorAll(".user-menu[open], .nav-menu[open]").forEach((menu) => {
+            if (!menu.contains(event.target)) {
+                menu.open = false
+            }
+        })
+    })
+</script>

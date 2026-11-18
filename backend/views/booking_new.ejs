@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head.ejs") %>
+    <title>Book a Session - High Street Gym</title>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+    <%- include("partials/header.ejs") %>
+
+    <main class="flex-1 w-full max-w-2xl mx-auto px-4 sm:px-6 py-8">
+        <div class="card">
+            <h2 class="text-xl font-bold text-slate-900">Book a session</h2>
+            <p class="text-sm text-slate-500 mt-1 mb-6">
+                <span class="font-semibold text-slate-700"><%= selected.activity.name %></span>
+                on <%= selected.session.date %>
+                &middot; <%= selected.session.startTime.slice(0, 5) %> &ndash; <%= selected.session.endTime.slice(0, 5) %>
+            </p>
+
+            <form action="/bookings/new" method="post" class="space-y-4">
+                <% const options = [selected, ...alternatives] %>
+                <fieldset>
+                    <legend class="label">Choose a trainer</legend>
+                    <div class="space-y-2">
+                        <% for (const opt of options) { %>
+                            <label class="flex items-center gap-3 border border-slate-200 rounded-lg p-3 cursor-pointer hover:bg-slate-50">
+                                <input
+                                    type="radio"
+                                    name="sessionId"
+                                    value="<%= opt.session.id %>"
+                                    <%= opt.session.id == selected.session.id ? "checked" : "" %>
+                                    class="accent-brand-600" />
+                                <span class="text-sm">
+                                    <span class="font-semibold text-slate-900"><%= opt.trainer.firstName %> <%= opt.trainer.lastName %></span>
+                                    <span class="text-slate-500"> &middot; <%= opt.location.name %></span>
+                                </span>
+                            </label>
+                        <% } %>
+                    </div>
+                </fieldset>
+
+                <div class="flex items-center gap-3 pt-2">
+                    <button type="submit" class="btn btn-primary">Confirm booking</button>
+                    <a href="/timetable" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

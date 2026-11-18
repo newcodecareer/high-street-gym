@@ -1,0 +1,24 @@
+{
+  "name": "high-street-gym",
+  "version": "1.0.0",
+  "private": true,
+  "description": "High Street Gym - Express/EJS management site with a React mobile app and JSON API",
+  "scripts": {
+    "dev": "npm run dev -w backend",
+    "start": "npm run start -w backend",
+    "tailwind": "npm run tailwind -w backend",
+    "tailwind:build": "npm run tailwind:build -w backend",
+    "setup-db": "npm run setup-db -w backend",
+    "db:migrate": "npm run db:migrate -w backend",
+    "db:next-week": "npm run db:next-week -w backend",
+    "db:migrate:api-key": "npm run db:migrate:api-key -w backend",
+    "dev:frontend": "npm run dev -w frontend",
+    "build:frontend": "npm run build -w frontend",
+    "lint": "npm run lint -w frontend",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}

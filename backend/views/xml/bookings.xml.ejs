@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bookings [
+    <!ELEMENT bookings (booking*)>
+    <!ATTLIST bookings member CDATA #REQUIRED>
+    <!ATTLIST bookings export-date CDATA #REQUIRED>
+    <!ELEMENT booking (booked-at, activity, trainer, location, date, start-time, end-time)>
+    <!ATTLIST booking id CDATA #REQUIRED>
+    <!ELEMENT booked-at (#PCDATA)>
+    <!ELEMENT activity (name, description)>
+    <!ELEMENT trainer (#PCDATA)>
+    <!ELEMENT location (name, address)>
+    <!ELEMENT name (#PCDATA)>
+    <!ELEMENT description (#PCDATA)>
+    <!ELEMENT address (#PCDATA)>
+    <!ELEMENT date (#PCDATA)>
+    <!ELEMENT start-time (#PCDATA)>
+    <!ELEMENT end-time (#PCDATA)>
+]>
+<!-- Copyright © <%= exportDate.slice(0, 4) %> High Street Gym. All rights reserved. -->
+<bookings
+    member="<%= member.firstName %> <%= member.lastName %>"
+    export-date="<%= exportDate %>">
+    <% for (const item of bookings) { %>
+    <booking id="<%= item.booking.id %>">
+        <booked-at><%= item.booking.createdAt %></booked-at>
+        <activity>
+            <name><%= item.activity.name %></name>
+            <description><%= item.activity.description %></description>
+        </activity>
+        <trainer><%= item.trainer.firstName %> <%= item.trainer.lastName %></trainer>
+        <location>
+            <name><%= item.location.name %></name>
+            <address><%= item.location.address %></address>
+        </location>
+        <date><%= item.session.date %></date>
+        <start-time><%= item.session.startTime.slice(0, 5) %></start-time>
+        <end-time><%= item.session.endTime.slice(0, 5) %></end-time>
+    </booking>
+    <% } %>
+</bookings>

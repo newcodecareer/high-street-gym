@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head.ejs") %>
+    <title><%= status %> - High Street Gym</title>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+    <%- include("partials/header.ejs") %>
+    <%
+        // Go back to where the error came from. An admin screen returns to its
+        // own list (/admin/sessions/5 -> /admin/sessions); everything else
+        // returns to the timetable. A controller can override both.
+        const path = currentPath || ""
+        const adminResource = path.startsWith("/admin/") && role == "admin" ? path.split("/")[2] : ""
+        const backTo = typeof backHref != "undefined" ? backHref : adminResource ? `/admin/${adminResource}` : "/timetable"
+        const backText = typeof backLabel != "undefined" ? backLabel : adminResource ? `Back to ${adminResource}` : "Back to timetable"
+    %>
+    <main class="flex-1 w-full max-w-lg mx-auto px-4 py-12">
+        <div class="card border-l-4 border-l-brand-500">
+            <h2 class="text-lg font-bold text-slate-900"><%= status %></h2>
+            <% if (typeof message != "undefined") { %>
+                <p class="text-sm text-slate-600 mt-2"><%= message %></p>
+            <% } %>
+            <a href="<%= backTo %>" class="btn btn-outline mt-6"><%= backText %></a>
+        </div>
+    </main>
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

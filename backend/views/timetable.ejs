@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head.ejs") %>
+    <title>Timetable - High Street Gym</title>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+    <%- include("partials/header.ejs") %>
+
+    <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <div class="flex items-end justify-between mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900">Weekly timetable</h2>
+                <p class="text-sm text-slate-500 mt-1">
+                    <%= days[0].name %> <%= days[0].date %> &mdash; <%= days[6].name %> <%= days[6].date %>
+                </p>
+            </div>
+            <% if (role == "member") { %>
+                <span class="text-sm text-slate-500">Select a session below to book it.</span>
+            <% } %>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% for (const day of days) { %>
+                <div class="bg-white rounded-xl border border-brand-500 shadow-xs overflow-hidden">
+                    <div class="px-3 py-2 bg-slate-100 border-b border-slate-200 text-slate-900">
+                        <div class="text-sm font-semibold"><%= day.short %></div>
+                        <div class="text-xs text-slate-600"><%= day.date %></div>
+                    </div>
+                    <div class="p-2 space-y-2 min-h-[8rem]">
+                        <% if (day.sessions.length == 0) { %>
+                            <p class="text-xs text-slate-400 text-center py-4">No classes</p>
+                        <% } %>
+                        <% for (const s of day.sessions) { %>
+                            <div class="border border-slate-200 rounded-lg p-2">
+                                <p class="text-sm font-semibold text-slate-900"><%= s.activity.name %></p>
+                                <p class="text-xs text-slate-500"><%= s.session.startTime.slice(0, 5) %> &ndash; <%= s.session.endTime.slice(0, 5) %></p>
+                                <p class="text-xs text-slate-500"><%= s.location.name %></p>
+                                <p class="text-xs text-slate-500">with <%= s.trainer.firstName %> <%= s.trainer.lastName %></p>
+                                <% if (role == "member") { %>
+                                    <%# A started session gets a label instead of a link. %>
+                                    <% if (hasStarted(s.session)) { %>
+                                        <span class="btn btn-outline flex! w-3/5 mx-auto mt-1 py-1! text-xs! cursor-not-allowed opacity-60" aria-disabled="true">Ended</span>
+                                    <% } else { %>
+                                        <a href="/bookings/new/<%= s.session.id %>" class="btn btn-primary flex! w-3/5 mx-auto mt-1 py-1! text-xs!">Book</a>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

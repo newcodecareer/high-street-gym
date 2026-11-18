@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head.ejs") %>
+    <title>Manage Posts - High Street Gym</title>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+    <%- include("../partials/header.ejs") %>
+
+    <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4">Manage posts</h2>
+
+        <div class="flex flex-col lg:flex-row lg:gap-6">
+            <%- include("../partials/admin_nav.ejs") %>
+            <div class="flex-1 min-w-0">
+                <form action="/admin/posts" method="get" class="flex gap-2 mb-6">
+                    <input type="text" name="search_term" value="<%= searchTerm %>" maxlength="100" placeholder="Search by subject, body or author..." class="input max-w-sm" />
+                    <button type="submit" class="btn btn-outline">Search</button>
+                    <% if (searchTerm) { %>
+                        <a href="/admin/posts" class="btn btn-outline">Clear</a>
+                    <% } %>
+                </form>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    <div class="card">
+                        <%# Below md the author and date move under the subject. %>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="text-left text-slate-500 border-b border-slate-200">
+                                        <th class="py-2 pr-3 font-medium">Subject</th>
+                                        <th class="py-2 pr-3 font-medium max-md:hidden">Author</th>
+                                        <th class="py-2 pr-3 font-medium max-md:hidden">Posted</th>
+                                        <th class="py-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (const p of posts) { %>
+                                        <tr class="border-b border-slate-100">
+                                            <td class="py-2 pr-3 font-medium">
+                                                <%= p.post.subject %>
+                                                <div class="text-xs text-slate-500 font-normal md:hidden">
+                                                    <%= p.author.firstName %> <%= p.author.lastName %> &middot;
+                                                    <%= p.post.createdAt.slice(0, 16) %>
+                                                </div>
+                                            </td>
+                                            <td class="py-2 pr-3 text-slate-500 max-md:hidden"><%= p.author.firstName %> <%= p.author.lastName %></td>
+                                            <td class="py-2 pr-3 text-slate-500 max-md:hidden"><%= p.post.createdAt.slice(0, 16) %></td>
+                                            <td class="py-2 text-right">
+                                                <a href="/admin/posts/<%= p.post.id %>" class="btn-link">Edit</a>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <%- include("../partials/table_view_more.ejs") %>
+                    </div>
+
+                    <form
+                        action="/admin/posts<% if (selectedPost.id != null) { %>/<%= selectedPost.id %><% } %>"
+                        method="post"
+                        class="card space-y-4">
+                        <div>
+                            <label for="memberId" class="label">Author</label>
+                            <select name="memberId" id="memberId" class="input">
+                                <% for (const member of members) { %>
+                                    <option value="<%= member.id %>" <%= String(selectedPost.memberId) == String(member.id) ? "selected" : "" %>>
+                                        <%= member.firstName %> <%= member.lastName %> (<%= member.email %>)
+                                    </option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="subject" class="label">Subject</label>
+                            <input type="text" name="subject" id="subject" class="input" maxlength="120" value="<%= selectedPost.subject %>" />
+                        </div>
+                        <div>
+                            <label for="body" class="label">Body</label>
+                            <textarea name="body" id="body" rows="6" class="input" maxlength="5000"><%= selectedPost.body %></textarea>
+                        </div>
+                        <div class="flex items-center gap-3 pt-2">
+                            <a href="/admin/posts" class="btn btn-outline">Clear</a>
+                            <% if (selectedPost.id == null) { %>
+                                <button type="submit" name="action" value="create" class="btn btn-primary">Create</button>
+                            <% } else { %>
+                                <button type="submit" name="action" value="update" class="btn btn-primary">Update</button>
+                                <button type="submit" name="action" value="delete" class="btn btn-danger">Delete</button>
+                            <% } %>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include("../partials/footer.ejs") %>
+</body>
+</html>

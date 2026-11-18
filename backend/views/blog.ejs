@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head.ejs") %>
+    <title>Blog - High Street Gym</title>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+    <%- include("partials/header.ejs") %>
+
+    <main class="flex-1 w-full max-w-3xl mx-auto px-4 sm:px-6 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-slate-900">Community blog</h2>
+            <% if (role == "member") { %>
+                <a href="/blog/new" class="btn btn-primary">New post</a>
+            <% } %>
+        </div>
+
+        <% if (posts.length == 0) { %>
+            <div class="card text-center text-slate-500">
+                No posts yet. <% if (role == "member") { %>Be the first to share!<% } %>
+            </div>
+        <% } %>
+
+        <div class="space-y-4">
+            <% for (const item of posts) { %>
+                <% const canDelete = authenticatedUser && (role == "admin" || item.post.memberId == authenticatedUser.id) %>
+                <article class="card">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900"><%= item.post.subject %></h3>
+                            <p class="text-xs text-slate-500 mt-1">
+                                <%= item.author.firstName %> <%= item.author.lastName %>
+                                &middot; <%= item.post.createdAt.slice(0, 16) %>
+                            </p>
+                        </div>
+                        <% if (canDelete) { %>
+                            <form action="/blog/<%= item.post.id %>/delete" method="post">
+                                <button type="submit" class="btn btn-danger px-3! py-1!">Delete</button>
+                            </form>
+                        <% } %>
+                    </div>
+                    <p class="text-sm text-slate-700 mt-3 whitespace-pre-line"><%= item.post.body %></p>
+                </article>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+</body>
+</html>

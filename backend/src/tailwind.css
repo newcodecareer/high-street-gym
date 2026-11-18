@@ -1,0 +1,40 @@
+@import "tailwindcss" source(none);
+
+/* Scan only the EJS templates. */
+@source "../views";
+
+@theme {
+    /* Brand yellow. Filled buttons use dark text. */
+    --color-brand-50: #fefce8;
+    --color-brand-100: #fef9c3;
+    --color-brand-200: #fef08a;
+    --color-brand-300: #fde047;
+    --color-brand-400: #facc15;
+    --color-brand-500: #eab308;
+    --color-brand-600: #ca8a04;
+    --color-brand-700: #a16207;
+    --color-brand-800: #854d0e;
+    --color-brand-900: #713f12;
+
+    /* Inter on the body. */
+    --font-sans: Inter, system-ui, sans-serif;
+}
+
+@layer components {
+    /* Tailwind v4 no longer sets cursor: pointer on buttons. */
+    .btn { @apply inline-flex items-center justify-center cursor-pointer px-4 py-2 text-sm font-semibold rounded-lg border transition focus:outline-hidden focus:ring-2 focus:ring-offset-2; }
+    /* Dark text on the yellow fill for contrast. */
+    .btn-primary { @apply bg-brand-500 text-slate-900 border-brand-600 hover:bg-brand-600 hover:border-brand-600 focus:ring-brand-700; }
+    .btn-outline { @apply bg-white text-slate-700 border-slate-300 hover:bg-brand-100 hover:border-brand-500 focus:ring-brand-600; }
+    .btn-danger { @apply bg-red-600 text-white border-red-600 hover:bg-red-700 focus:ring-red-500; }
+    .btn-link { @apply text-sm font-semibold text-brand-700 hover:text-brand-800 hover:underline; }
+    /* A bare border needs a colour class, or it inherits the text colour. */
+    .input { @apply block w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-600 focus:border-brand-600; }
+    .label { @apply block text-sm font-medium text-slate-700 mb-1; }
+    .card { @apply bg-white rounded-xl shadow-xs border border-brand-500 p-5; }
+    /* Hide the default marker on the header menus. */
+    .user-menu summary,
+    .nav-menu summary { list-style: none; }
+    .user-menu summary::-webkit-details-marker,
+    .nav-menu summary::-webkit-details-marker { display: none; }
+}

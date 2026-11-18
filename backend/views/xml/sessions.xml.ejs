@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE schedule [
+    <!ELEMENT schedule (session*)>
+    <!ATTLIST schedule trainer CDATA #REQUIRED>
+    <!ATTLIST schedule week-start CDATA #REQUIRED>
+    <!ATTLIST schedule week-end CDATA #REQUIRED>
+    <!ATTLIST schedule export-date CDATA #REQUIRED>
+    <!ELEMENT session (activity, location, date, start-time, end-time, capacity)>
+    <!ATTLIST session id CDATA #REQUIRED>
+    <!ELEMENT activity (#PCDATA)>
+    <!ELEMENT location (#PCDATA)>
+    <!ELEMENT date (#PCDATA)>
+    <!ELEMENT start-time (#PCDATA)>
+    <!ELEMENT end-time (#PCDATA)>
+    <!ELEMENT capacity (#PCDATA)>
+]>
+<!-- Copyright © <%= exportDate.slice(0, 4) %> High Street Gym. All rights reserved. -->
+<schedule
+    trainer="<%= trainer.firstName %> <%= trainer.lastName %>"
+    week-start="<%= start %>"
+    week-end="<%= end %>"
+    export-date="<%= exportDate %>">
+    <% for (const item of sessions) { %>
+    <session id="<%= item.session.id %>">
+        <activity><%= item.activity.name %></activity>
+        <location><%= item.location.name %></location>
+        <date><%= item.session.date %></date>
+        <start-time><%= item.session.startTime.slice(0, 5) %></start-time>
+        <end-time><%= item.session.endTime.slice(0, 5) %></end-time>
+        <capacity><%= item.session.capacity %></capacity>
+    </session>
+    <% } %>
+</schedule>

@@ -1,0 +1,40 @@
+<%
+    // Show 10 rows, then 10 more per click. Without JS all rows stay visible.
+    const visible = 10
+    const step = 10
+%>
+<div class="text-center mt-4" data-table-more hidden>
+    <button type="button" class="btn btn-primary" data-table-more-button>
+        View more (<span data-table-more-remaining></span>)
+    </button>
+</div>
+<script>
+    (() => {
+        const VISIBLE = <%= visible %>
+        const STEP = <%= step %>
+
+        // Admin pages render exactly one data table, in the column above this button
+        const rows = [...document.querySelectorAll("table tbody tr")]
+        const wrapper = document.querySelector("[data-table-more]")
+        if (rows.length <= VISIBLE) return
+
+        const button = wrapper.querySelector("[data-table-more-button]")
+        const remaining = wrapper.querySelector("[data-table-more-remaining]")
+        let shown = VISIBLE
+
+        const update = () => {
+            rows.forEach((row, index) => { row.hidden = index >= shown })
+            const left = rows.length - shown
+            remaining.textContent = left
+            wrapper.hidden = left <= 0
+        }
+
+        button.addEventListener("click", () => {
+            shown = Math.min(shown + STEP, rows.length)
+            update()
+        })
+
+        wrapper.hidden = false
+        update()
+    })()
+</script>
